@@ -1,21 +1,36 @@
 # helix 🧬
 
-### High-Performance AI Systems Engineering Toolkit
+### Python Systems Engineering Toolkit for AI Infrastructure Research
 
-`helix` is an enterprise-grade, highly optimized Python systems library designed to handle the core infrastructure bottlenecks of modern AI platforms: high-throughput data ingestion, low-latency FFI boundaries, zero-copy memory management, parallel multi-threaded execution, and resilient API orchestration.
+`helix` is a Python systems engineering toolkit exploring the low-level foundations behind modern AI infrastructure: type-safe interfaces, concurrency models, memory-efficient data movement, native extension boundaries, and resilient execution patterns.
 
-This repository serves as a definitive demonstration of **Senior/Staff-level Python mastery**, proving a deep understanding of CPython internals, the Python 3.13+ concurrency paradigm, and production-grade software engineering practices.
+This repository documents practical experiments and implementations around CPython internals, modern Python typing, runtime architecture, and performance-oriented engineering techniques. Each topic is developed with executable examples, benchmarks, and validation where applicable.
+
+---
+
+## 🚧 Project Status
+
+`helix` is an active research and learning repository.
+
+Current focus areas:
+
+- Python 3.13 runtime experiments.
+- Advanced typing patterns for AI infrastructure.
+- Benchmark-driven exploration of concurrency and memory behavior.
+- Native extension interoperability.
+
+The project prioritizes understanding and measurement over production readiness.
 
 ---
 
 ## 🛠️ 2026 Tooling & Engineering Stack
 
-This project strictly adheres to modern enterprise Python standards, rejecting legacy package managers and un-typed scripts.
+This project follows modern Python engineering practices with reproducible environments, strict static analysis, and automated validation workflows.
 
 - **Runtime:** Python 3.13+ (compiled with support for experimental free-threading `--disable-gil` and isolated subinterpreters).
 - **Workspace & Package Manager:** [`uv`](https://github.com/astral-sh/uv) — deployed for ultra-fast, deterministic dependency resolution, virtualenv management, and workspace isolation.
 - **Linter & Formatter:** [`ruff`](https://github.com/astral-sh/ruff) — configured with strict rule sets including Pyflakes, pycodestyle, McCabe complexity (`C90`), Bugbear (`B`), Pydantic/Polars specific checks, and absolute type-checking import management (`TCH`).
-- **Static Type Analysis:** [`mypy`](https://github.com/python/mypy) / [`pyright`](https://github.com/microsoft/pyright) executed with `strict = true` configurations. Every public API boundary is fully typed.
+- **Static Type Analysis:** `mypy` / `pyright` executed with strict configurations to enforce type correctness across core modules and public interfaces.
 - **Testing & Fuzzing:** `pytest` paired with `pytest-benchmark` for regression tracking, and `hypothesis` for stateful, property-based fuzz testing.
 
 ---
@@ -32,7 +47,7 @@ helix/
 │   ├── test_bench_memory.py
 │   └── test_bench_ffi.py
 ├── src/
-│   └── helix/                  # Core library candidate for production import
+│   └── helix/                  # Core experimental Python systems modules
 │       ├── __init__.py
 │       ├── core/
 │       │   ├── typing.py       # Variadic tensor shapes and performance protocols
@@ -57,55 +72,90 @@ helix/
 
 ---
 
-## 📦 Module Breakdown & Core Deliverables
+## 📦 Module Breakdown & Research Areas
 
-### 1. `helix.core.typing` (Advanced Type Engineering for AI)
+`helix` is organized as a collection of focused experiments around Python runtime behavior, AI infrastructure primitives, and performance-oriented engineering techniques.
 
-- **Compile-Time Tensor Shape Validation:** Leveraging `TypeVarTuple` (Variadic Generics) to implement structural type hints that enforce matrix and tensor shape compliance (e.g., validating that an incoming input batch matches embedding layer expectations before reaching runtime).
-- **Structural Subtyping:** Implementing explicit `Protocols` to define zero-overhead behavioral contracts for runtime components, avoiding heavy inheritance chains.
+The modules are intentionally separated so individual concepts can be explored, benchmarked, and validated independently rather than hidden behind a large framework abstraction.
 
-### 2. `helix.concurrency` (The Modern Parallelism Paradigm)
+### 1. `helix.core.typing` — Advanced Type System Experiments
 
-- **Free-Threaded CPython Executor:** Harnessing Python 3.13 No-GIL execution states to run compute-heavy token processing and matrix mathematics across multiple native CPU threads concurrently.
-- **Isolated Subinterpreters (PEP 684):** Creating completely isolated execution contexts using the `interpreters` module, passing structured payloads across boundaries without cross-interpreter lock contention.
-- **Resilient Async Token-Bucket Rate Limiter:** An asynchronous worker engine capable of handling tens of thousands of concurrent connections, featuring backoff strategies and adaptive shedding to safely maximize upstream LLM/Vector DB API limits.
+Exploring how Python's modern typing capabilities can improve correctness at AI infrastructure boundaries.
 
-### 3. `helix.data` (Zero-Copy Buffer & Shared Memory Mechanics)
+Current research areas:
 
-- **High-Throughput Shared Dataloaders:** Creating custom, zero-copy data streaming consumers that utilize `multiprocessing.shared_memory` to pipe bulk text/embedding buffers across worker processes without copying overhead.
-- **Zero-Copy Binary Interop:** Practical application of `memoryview` and Python's native buffer protocol to slice and manipulate raw binary payloads directly in memory.
+- **Variadic Generics (`TypeVarTuple`):** Investigating how Python's type system can represent higher-dimensional data structures, such as tensor-like shapes, and provide earlier feedback for shape mismatches.
+- **Structural Subtyping:** Exploring `Protocol`-based interfaces as lightweight contracts between runtime components without requiring rigid inheritance hierarchies.
 
-### 4. `helix.ffi` (Ultra-Low Latency Native Extensions)
+### 2. `helix.concurrency` — Python Execution Model Experiments
 
-- **`nanobind` Interop Boundary:** A clean C++ extension engineered for heavy math operations (such as high-dimensional cosine similarity calculations). Focuses entirely on strict object lifecycle boundaries, preventing pointer/reference leaks between C++ and CPython heap spaces.
+Exploring modern approaches to concurrent execution in Python and their implications for AI workloads.
 
-### 5. `helix.orchestration` (Agentic State & DAG Execution)
+Current research areas:
 
-- **Memory-Optimized DAG Engine:** A zero-dependency, explicitly typed Directed Acyclic Graph executor designed to manage complex agentic logic pipelines. Built using optimized node maps (`collections.deque`, `bisect`) to execute dependent tasks with minimum scheduling latency.
+- **Free-Threaded CPython:** Studying Python 3.13's experimental free-threading capabilities and how CPU-bound workloads may benefit from reduced GIL constraints.
+- **Subinterpreters (PEP 684):** Investigating isolated execution contexts and message-passing patterns between Python interpreter boundaries.
+- **Async Resource Management:** Prototyping resilient async coordination patterns such as rate limiting, backpressure, and controlled task execution for external AI service dependencies.
 
-### 6. `helix.telemetry` (Production Diagnostics & Telemetry)
+### 3. `helix.data` — Memory and Data Movement Experiments
 
-- **Context Propagation:** Fully instrumented OpenTelemetry spans across heterogeneous boundaries (async loops to sync threads, across subinterpreters).
-- **Systems Profiling Integration:** Automated hooks to profile running applications with zero-overhead sampling tools (`py-spy`) and memory tracking tools (`memray`) to isolate hot spots and heap fragmentation under heavy load.
+Exploring Python's lower-level data handling capabilities for high-throughput workloads.
 
----
+Current research areas:
 
-## 🧪 "Proof of Competence" Verification Framework
+- **Buffer Protocol Exploration:** Studying `memoryview`, buffer interfaces, and techniques for reducing unnecessary data copies.
+- **Shared Memory Patterns:** Investigating approaches for transferring large data payloads between workers using Python's shared memory primitives.
 
-Every architectural optimization made within `helix` is strictly verified through automated tests located in the `benchmarks/` directory. We do not guess; we measure.
+### 4. `helix.ffi` — Native Extension Boundary Experiments
 
-| Pillar                        | Core Architectural Pattern                                         | The Verification Metric / Proof                                                                                                                                                                                                                                                                                                |
-| :---------------------------- | :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Concurrency & Parallelism** | Resilient Token-Bucket Async Task Pool vs. Upstream Rate-limits.   | Run a macro-benchmark simulating 5,000 concurrent LLM API requests with an injected 25% failure rate (HTTP 429 / 503). The implementation must demonstrate **zero dropped tasks, bounded memory usage, and near-perfect utilization of the token bucket limits** compared to a naive `asyncio.gather` approach.                |
-| **Memory Engineering**        | High-Volume Token Metadata Registry (`__slots__` + Shared Memory). | A validation script utilizing `memray` or `tracemalloc` that instantiates 10,000,000 token/embedding metadata records. Prove a **>5x reduction in total heap footprint** and zero memory fragmentation when switching from standard dictionary-backed class instances to `__slots__` and shared memory blocks.                 |
-| **Performance & FFI**         | Zero-Copy Buffer Protocol vs. Pure Python Loop vs. `nanobind` C++. | A `pytest-benchmark` execution comparing a heavy text-processing task (e.g., custom regex tokenization or cosine-similarity matrix math). Terminal output must prove that the **`nanobind` or vectorized Polars implementation scales at O(1) or O(N) memory**, running orders of magnitude faster than standard Python loops. |
-| **AI Systems Patterns**       | Multi-threaded No-GIL Concurrent Dataloader.                       | Run a pipeline that shards and streams a mock 20GB text corpus into memory. Using Python 3.13 free-threading, provide a performance graph demonstrating **linear CPU core scaling (e.g., 4x throughput on 4 cores)**, breaking past the historical single-core execution limits of the legacy GIL.                             |
+Exploring interoperability between Python and native execution environments.
 
----
+Current research areas:
+
+- **C++ Extension Boundaries:** Investigating native extension development using tools such as `nanobind`.
+- **Lifecycle and Memory Safety:** Studying ownership boundaries between CPython objects and native allocations.
+
+### 5. `helix.orchestration` — Typed Workflow Execution Experiments
+
+Exploring lightweight execution graph patterns that are relevant to AI workflow systems.
+
+Current research areas:
+
+- **Directed Acyclic Graph Execution:** Prototyping explicitly typed workflow graphs for coordinating dependent computational tasks.
+- **Runtime Scheduling Strategies:** Evaluating different approaches for representing and executing task dependencies efficiently.
+
+### 6. `helix.telemetry` — Observability Experiments
+
+Exploring diagnostic patterns required by complex asynchronous and distributed systems.
+
+Current research areas:
+
+- **Context Propagation:** Investigating how execution context can be preserved across asynchronous tasks and heterogeneous runtime boundaries.
+- **Performance Profiling:** Experimenting with profiling tools such as `py-spy` and `memray` to understand CPU usage and memory behavior.
+
+## 🧪 Verification & Benchmarking Approach
+
+`helix` follows a measurement-driven development approach. Experiments are accompanied by benchmarks and validation scripts where applicable, with the goal of understanding runtime behavior rather than optimizing prematurely.
+
+The benchmark suite is designed to answer questions such as:
+
+| Area | Research Question | Validation Approach |
+| :--- | :--- | :--- |
+| **Concurrency** | How do different Python execution models behave under concurrent workloads? | Compare async scheduling strategies, thread-based execution, and experimental free-threaded runtimes using controlled workloads. |
+| **Memory Usage** | How do Python object layouts and data movement strategies affect memory consumption? | Measure allocations and memory behavior using tools such as `tracemalloc` and `memray`. |
+| **Native Extensions** | What trade-offs exist between pure Python implementations and native execution boundaries? | Compare execution characteristics between Python implementations and native extensions using repeatable benchmarks. |
+| **AI Infrastructure Patterns** | How can runtime primitives support reliable AI workload execution? | Prototype workload orchestration patterns involving scheduling, resource limits, and external service coordination. |
+
+Benchmark results are treated as engineering evidence rather than absolute performance claims. Each experiment documents:
+
+- Runtime version and environment configuration.
+- Workload characteristics.
+- Measurement methodology.
+- Observed behavior and trade-offs.
 
 ## ⚡ Quickstart & Local Setup
 
-Prerequisites: Ensure you have `uv` installed on your machine and a local installation of Python 3.13 configured with free-threading features if you wish to run the No-GIL benchmarks.
+Prerequisites: Ensure you have `uv` installed and Python 3.13 configured locally. Some experiments may require a free-threaded Python build (`--disable-gil`).
 
 1. **Clone and Initialize Environment:**
 
